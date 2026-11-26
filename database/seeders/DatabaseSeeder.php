@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(AgroSkanDemoSeeder::class);
         $this->call(ExpenseDemoSeeder::class);
+        $this->call(SupplierDemoSeeder::class);
     }
 }

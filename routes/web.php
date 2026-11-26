@@ -23,6 +23,7 @@ Route::get('/reports', [ReportController::class, 'index'])->name('reports.index'
 Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
 Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
 Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+Route::get('/expenses/toifa/{category}', [ExpenseController::class, 'suppliers'])->name('expenses.suppliers');
 
 Route::get('/ai-tahlil', [AiAnalysisController::class, 'index'])->name('ai-analysis.index');
 Route::post('/ai-tahlil', [AiAnalysisController::class, 'analyze'])->name('ai-analysis.analyze');

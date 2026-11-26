@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Expense;
 use App\Models\Greenhouse;
+use App\Models\Supplier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -92,5 +93,20 @@ class ExpenseController extends Controller
         $expense->delete();
 
         return back();
+    }
+
+    public function suppliers(string $category): Response
+    {
+        abort_unless(array_key_exists($category, Expense::CATEGORIES), 404);
+
+        $suppliers = Supplier::where('category', $category)
+            ->orderBy('name')
+            ->get(['id', 'name', 'phone', 'location', 'note']);
+
+        return Inertia::render('Suppliers', [
+            'category' => $category,
+            'categoryLabel' => Expense::CATEGORIES[$category],
+            'suppliers' => $suppliers,
+        ]);
     }
 }

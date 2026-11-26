@@ -112,13 +112,17 @@ export default function Expenses({ greenhouses, greenhouseId, categories, expens
                     )}
                     <div className="mt-2 divide-y divide-neutral-800 text-sm">
                         {byCategory.map((c, i) => (
-                            <div key={c.category} className="flex items-center justify-between py-2">
-                                <span className="flex items-center gap-2 text-neutral-300">
+                            <Link
+                                key={c.category}
+                                href={`/expenses/toifa/${c.category}`}
+                                className="flex items-center justify-between py-2 transition hover:text-emerald-400"
+                            >
+                                <span className="flex items-center gap-2 text-neutral-300 group-hover:text-emerald-400">
                                     <span className="h-2.5 w-2.5 rounded-full" style={{ background: COLORS[i % COLORS.length] }} />
                                     {c.label}
                                 </span>
                                 <span className="font-medium text-neutral-100">{formatSom(c.total)}</span>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </section>
@@ -151,7 +155,12 @@ export default function Expenses({ greenhouses, greenhouseId, categories, expens
                     {expenses.map((e) => (
                         <div key={e.id} className="flex items-center justify-between gap-3 py-2.5">
                             <div>
-                                <div className="font-medium text-neutral-100">{categories[e.category] ?? e.category}</div>
+                                <Link
+                                    href={`/expenses/toifa/${e.category}`}
+                                    className="font-medium text-neutral-100 hover:text-emerald-400"
+                                >
+                                    {categories[e.category] ?? e.category}
+                                </Link>
                                 <div className="text-xs text-neutral-500">
                                     {new Date(e.spent_on).toLocaleDateString('uz-UZ')} {e.note ? `· ${e.note}` : ''}
                                 </div>

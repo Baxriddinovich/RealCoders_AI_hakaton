@@ -1,0 +1,29 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Expense;
+use App\Models\Supplier;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Supplier>
+ */
+class SupplierFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'category' => fake()->randomElement(array_keys(Expense::CATEGORIES)),
+            'name' => fake()->company(),
+            'phone' => fake()->phoneNumber(),
+            'location' => fake()->city(),
+            'note' => null,
+        ];
+    }
+}
