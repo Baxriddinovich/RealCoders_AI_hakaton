@@ -1,13 +1,14 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LayoutGrid, Bell, BarChart3, Sprout, ScanEye, Menu, X } from 'lucide-react';
+import { LayoutGrid, Bell, BarChart3, Sprout, ScanEye, Menu, X, Wallet } from 'lucide-react';
 
 const nav = [
     { href: '/', label: 'Boshqaruv paneli', icon: LayoutGrid },
     { href: '/ai-tahlil', label: 'AI Tahlil', icon: ScanEye },
     { href: '/alerts', label: 'Ogohlantirishlar', icon: Bell },
     { href: '/reports', label: 'Hisobotlar', icon: BarChart3 },
+    { href: '/expenses', label: 'Xarajatlar', icon: Wallet },
 ];
 
 function Logo() {

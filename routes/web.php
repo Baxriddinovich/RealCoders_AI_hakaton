@@ -3,6 +3,7 @@
 use App\Http\Controllers\AiAnalysisController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\PlantSpotController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportPdfController;
@@ -18,6 +19,10 @@ Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
 Route::patch('/alerts/{alert}', [AlertController::class, 'update'])->name('alerts.update');
 
 Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
 
 Route::get('/ai-tahlil', [AiAnalysisController::class, 'index'])->name('ai-analysis.index');
 Route::post('/ai-tahlil', [AiAnalysisController::class, 'analyze'])->name('ai-analysis.analyze');
