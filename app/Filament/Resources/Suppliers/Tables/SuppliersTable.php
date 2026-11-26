@@ -29,6 +29,10 @@ class SuppliersTable
                 TextColumn::make('location')
                     ->label('Joylashuvi')
                     ->searchable(),
+                TextColumn::make('account_number')
+                    ->label('Hisob raqami')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('category')

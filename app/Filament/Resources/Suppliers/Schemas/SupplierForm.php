@@ -25,6 +25,9 @@ class SupplierForm
                     ->tel(),
                 TextInput::make('location')
                     ->label('Joylashuvi'),
+                TextInput::make('account_number')
+                    ->label('Hisob raqami')
+                    ->helperText("Gaz/svet/suv kabi kommunal toifalar uchun to'lov hisob raqami"),
                 TextInput::make('note')
                     ->label('Izoh')
                     ->maxLength(255),

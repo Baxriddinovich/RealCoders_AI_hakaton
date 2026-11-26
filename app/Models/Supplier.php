@@ -16,6 +16,7 @@ class Supplier extends Model
         'name',
         'phone',
         'location',
+        'account_number',
         'note',
     ];
 }

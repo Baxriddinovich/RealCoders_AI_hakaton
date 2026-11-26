@@ -101,7 +101,7 @@ class ExpenseController extends Controller
 
         $suppliers = Supplier::where('category', $category)
             ->orderBy('name')
-            ->get(['id', 'name', 'phone', 'location', 'note']);
+            ->get(['id', 'name', 'phone', 'location', 'account_number', 'note']);
 
         return Inertia::render('Suppliers', [
             'category' => $category,

@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { ArrowLeft, Phone, MapPin, User } from 'lucide-react';
+import { ArrowLeft, Phone, MapPin, User, CreditCard } from 'lucide-react';
 
 export default function Suppliers({ category, categoryLabel, suppliers }) {
     return (
@@ -39,8 +39,14 @@ export default function Suppliers({ category, categoryLabel, suppliers }) {
                                 </a>
                             )}
                             {s.location && (
-                                <div className="flex items-center gap-2 text-sm text-neutral-300">
+                                <div className="mb-1.5 flex items-center gap-2 text-sm text-neutral-300">
                                     <MapPin className="h-3.5 w-3.5 text-neutral-500" /> {s.location}
+                                </div>
+                            )}
+                            {s.account_number && (
+                                <div className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-950 px-2.5 py-1.5 text-sm text-emerald-400">
+                                    <CreditCard className="h-3.5 w-3.5" />
+                                    <span className="font-mono tracking-wide">{s.account_number}</span>
                                 </div>
                             )}
                             {s.note && <p className="mt-2 text-xs text-neutral-500">{s.note}</p>}
