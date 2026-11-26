@@ -112,9 +112,24 @@ class AiAnalysisController extends Controller
             ])
             ->values();
 
-        $topFine = $fineCategories->get($prediction['fine']['label']);
         $coarseLabel = $prediction['coarse']['label'];
         $ripenessLabel = $prediction['ripeness']['label'];
+
+        // The fine model is trained independently from the coarse one, so its
+        // raw top pick can disagree with the coarse verdict (e.g. "healthy"
+        // overall but a low-confidence disease name shown as the "exact
+        // diagnosis" — confusing for farmers). Keep the headline fine
+        // diagnosis consistent by picking the best-scoring fine class that
+        // actually belongs to the coarse category we're reporting.
+        $fineSlugInCoarseGroup = collect($prediction['fine']['probabilities'])
+            ->keys()
+            ->first(fn (string $slug) => $fineCategories->get($slug)?->type === $coarseLabel);
+
+        $fineLabel = $fineSlugInCoarseGroup ?? $prediction['fine']['label'];
+        $fineConfidence = $fineSlugInCoarseGroup
+            ? $prediction['fine']['probabilities'][$fineSlugInCoarseGroup]
+            : $prediction['fine']['confidence'];
+        $topFine = $fineCategories->get($fineLabel);
 
         return back()->with('analysis', [
             'crop' => $validated['crop'],
@@ -127,10 +142,10 @@ class AiAnalysisController extends Controller
                 'probabilities' => $coarseProbabilities,
             ],
             'fine' => [
-                'label' => $prediction['fine']['label'],
-                'label_name' => $topFine?->name_uz ?? $prediction['fine']['label'],
+                'label' => $fineLabel,
+                'label_name' => $topFine?->name_uz ?? $fineLabel,
                 'color' => $topFine?->color ?? '#888888',
-                'confidence' => $prediction['fine']['confidence'],
+                'confidence' => $fineConfidence,
                 'probabilities' => $fineProbabilities,
             ],
             'ripeness' => [
