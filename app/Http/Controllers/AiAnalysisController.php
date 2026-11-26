@@ -28,6 +28,20 @@ class AiAnalysisController extends Controller
         'deficiency' => '#E6C229',
     ];
 
+    private const RIPENESS_LABELS = [
+        'ripe' => 'Pishgan',
+        'unripe' => 'Pishmagan',
+        'ready' => "Yig'ishtirishga tayyor",
+        'overripe' => 'Ortiq pishib ketgan',
+    ];
+
+    private const RIPENESS_COLORS = [
+        'ripe' => '#D62828',
+        'unripe' => '#2E9E44',
+        'ready' => '#2E9E44',
+        'overripe' => '#C68E17',
+    ];
+
     private function metadata(): array
     {
         return json_decode(file_get_contents(self::ML_DIR.'/model_metadata.json'), true);
@@ -100,6 +114,7 @@ class AiAnalysisController extends Controller
 
         $topFine = $fineCategories->get($prediction['fine']['label']);
         $coarseLabel = $prediction['coarse']['label'];
+        $ripenessLabel = $prediction['ripeness']['label'];
 
         return back()->with('analysis', [
             'crop' => $validated['crop'],
@@ -117,6 +132,12 @@ class AiAnalysisController extends Controller
                 'color' => $topFine?->color ?? '#888888',
                 'confidence' => $prediction['fine']['confidence'],
                 'probabilities' => $fineProbabilities,
+            ],
+            'ripeness' => [
+                'label' => $ripenessLabel,
+                'label_name' => self::RIPENESS_LABELS[$ripenessLabel] ?? $ripenessLabel,
+                'color' => self::RIPENESS_COLORS[$ripenessLabel] ?? '#888888',
+                'confidence' => $prediction['ripeness']['confidence'],
             ],
         ]);
     }

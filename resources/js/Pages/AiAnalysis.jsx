@@ -133,11 +133,19 @@ export default function AiAnalysis({ modelInfo }) {
                                                     Tahlil yakunlandi — {CROPS.find((c) => c.value === analysis.crop)?.label}
                                                 </span>
                                             </div>
-                                            <div
-                                                className="mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold"
-                                                style={{ backgroundColor: `${analysis.coarse.color}22`, color: analysis.coarse.color }}
-                                            >
-                                                {analysis.coarse.label_name}
+                                            <div className="mt-2 flex flex-wrap items-center gap-2">
+                                                <div
+                                                    className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold"
+                                                    style={{ backgroundColor: `${analysis.coarse.color}22`, color: analysis.coarse.color }}
+                                                >
+                                                    {analysis.coarse.label_name}
+                                                </div>
+                                                <div
+                                                    className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold"
+                                                    style={{ backgroundColor: `${analysis.ripeness.color}22`, color: analysis.ripeness.color }}
+                                                >
+                                                    {analysis.ripeness.label_name}
+                                                </div>
                                             </div>
                                             <div className="mt-3 text-3xl font-bold text-white">
                                                 {Math.round(analysis.coarse.confidence * 100)}%
@@ -145,6 +153,9 @@ export default function AiAnalysis({ modelInfo }) {
                                             </div>
                                             <p className="mt-2 text-xs text-neutral-500">
                                                 Taxminiy aniq tashxis: <span className="text-neutral-300">{analysis.fine.label_name}</span> ({Math.round(analysis.fine.confidence * 100)}%)
+                                            </p>
+                                            <p className="mt-1 text-xs text-neutral-600">
+                                                Pishganlik — rang asosidagi tezkor baho ({Math.round(analysis.ripeness.confidence * 100)}% ishonch), alohida o'qitilgan model emas.
                                             </p>
                                         </div>
                                     </div>
