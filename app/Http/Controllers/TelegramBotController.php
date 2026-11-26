@@ -90,7 +90,8 @@ class TelegramBotController extends Controller
             fn ($q) => $q->where('greenhouse_id', $greenhouse->id)
         )->where('status', 'new')->count();
 
-        $robot = RobotStatus::where('greenhouse_id', $greenhouse->id)->latest('last_scan_at')->first();
+        $robots = RobotStatus::whereHas('zone', fn ($q) => $q->where('greenhouse_id', $greenhouse->id))->get();
+        $scanningCount = $robots->where('status', 'scanning')->count();
 
         $this->telegram->sendMessage($chatId, implode("\n", [
             "🏠 <b>{$greenhouse->name}</b>",
@@ -99,7 +100,7 @@ class TelegramBotController extends Controller
             '📊 O\'rtacha sog\'liq indeksi: <b>'.round((float) $stats->avg_health, 1).'/100</b>',
             '🌿 Jami o\'simliklar: <b>'.(int) $stats->total.'</b>',
             '⚠️ Faol ogohlantirishlar: <b>'.$activeAlerts.'</b>',
-            '🤖 Robot holati: <b>'.($robot?->status ?? 'noma\'lum').'</b>',
+            '🤖 Robotlar: <b>'.$scanningCount.'/'.$robots->count().' skanerlamoqda</b>',
             '',
             'To\'liq hisobot uchun: /hisobot',
         ]));

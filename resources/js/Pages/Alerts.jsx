@@ -26,7 +26,7 @@ export default function Alerts({ alerts, filters, greenhouses }) {
 
             <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h1 className="text-2xl font-semibold">Ogohlantirishlar</h1>
-                <div className="flex gap-2 text-sm">
+                <div className="flex w-full gap-2 overflow-x-auto pb-1 text-sm sm:w-auto">
                     {[
                         ['', 'Hammasi'],
                         ['new', 'Yangi'],
@@ -36,7 +36,7 @@ export default function Alerts({ alerts, filters, greenhouses }) {
                         <button
                             key={value}
                             onClick={() => setFilter('status', value)}
-                            className={`rounded-full border px-3 py-1 ${
+                            className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1 ${
                                 (filters.status || '') === value
                                     ? 'border-emerald-700 bg-emerald-950 text-emerald-400'
                                     : 'border-neutral-800 text-neutral-400 hover:border-neutral-700'
@@ -49,10 +49,10 @@ export default function Alerts({ alerts, filters, greenhouses }) {
             </header>
 
             {greenhouses?.length > 1 && (
-                <div className="mb-6 flex gap-2">
+                <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
                     <button
                         onClick={() => setFilter('greenhouse', '')}
-                        className={`rounded-full border px-4 py-1.5 text-sm ${
+                        className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm ${
                             !filters.greenhouse
                                 ? 'border-emerald-700 bg-emerald-950 text-emerald-400'
                                 : 'border-neutral-800 text-neutral-400 hover:border-neutral-700'
@@ -64,7 +64,7 @@ export default function Alerts({ alerts, filters, greenhouses }) {
                         <button
                             key={gh.id}
                             onClick={() => setFilter('greenhouse', gh.id)}
-                            className={`rounded-full border px-4 py-1.5 text-sm ${
+                            className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm ${
                                 Number(filters.greenhouse) === gh.id
                                     ? 'border-emerald-700 bg-emerald-950 text-emerald-400'
                                     : 'border-neutral-800 text-neutral-400 hover:border-neutral-700'
@@ -78,7 +78,7 @@ export default function Alerts({ alerts, filters, greenhouses }) {
 
             <div className="space-y-3">
                 {alerts.data.map((alert) => (
-                    <div key={alert.id} className="flex items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900 p-4">
+                    <div key={alert.id} className="flex flex-wrap items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900 p-4">
                         <img src={alert.image_url} alt={alert.plant_code} className="h-16 w-16 shrink-0 rounded-lg object-cover" />
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">

@@ -1,25 +1,66 @@
-import { Head, Link } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import AppLayout from '@/Layouts/AppLayout';
 import StatCard from '@/Components/StatCard';
 import PlantTile from '@/Components/PlantTile';
-import { Sprout, TriangleAlert, HeartPulse, Bot, BatteryMedium, Leaf } from 'lucide-react';
+import { Sprout, TriangleAlert, HeartPulse, Bot, BatteryMedium, Leaf, Zap } from 'lucide-react';
 
-export default function Dashboard({ greenhouses, greenhouse, zones, stats, categoryBreakdown, alerts, forecasts, robot }) {
+export default function Dashboard({ greenhouses, greenhouse, zones, stats, categoryBreakdown, alerts, forecasts, robots }) {
     const healthyPct = stats.total_plants ? Math.round((stats.healthy_plants / stats.total_plants) * 100) : 0;
+
+    const [robotStates, setRobotStates] = useState(robots);
+    const [isTriggering, setIsTriggering] = useState(false);
+
+    useEffect(() => setRobotStates(robots), [robots]);
+
+    const isScanning = robotStates.some((r) => r.status === 'scanning');
+
+    useEffect(() => {
+        if (!isScanning) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            fetch(`/scans/status?greenhouse_id=${greenhouse.id}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setRobotStates(data.robots);
+                    if (!data.robots.some((r) => r.status === 'scanning')) {
+                        router.reload({ only: ['zones', 'stats', 'categoryBreakdown', 'alerts', 'forecasts', 'robots'] });
+                    }
+                });
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, [isScanning, greenhouse.id]);
+
+    const handleAnalyze = () => {
+        setIsTriggering(true);
+        router.post(
+            '/scans',
+            { greenhouse_id: greenhouse.id, crop: greenhouse.crop_slug },
+            { preserveScroll: true, onFinish: () => setIsTriggering(false) }
+        );
+    };
+
+    const scanningCount = robotStates.filter((r) => r.status === 'scanning').length;
+    const avgBattery = robotStates.length
+        ? Math.round(robotStates.reduce((sum, r) => sum + (r.battery_pct ?? 0), 0) / robotStates.length)
+        : null;
 
     return (
         <AppLayout>
             <Head title="Boshqaruv paneli" />
 
             {greenhouses.length > 1 && (
-                <div className="mb-4 flex gap-2">
+                <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
                     {greenhouses.map((gh) => (
                         <Link
                             key={gh.id}
                             href={`/?greenhouse=${gh.id}`}
                             preserveState={false}
-                            className={`rounded-full border px-4 py-1.5 text-sm transition ${
+                            className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition ${
                                 gh.id === greenhouse.id
                                     ? 'border-emerald-700 bg-emerald-950 text-emerald-400'
                                     : 'border-neutral-800 text-neutral-400 hover:border-neutral-700'
@@ -43,14 +84,28 @@ export default function Dashboard({ greenhouses, greenhouse, zones, stats, categ
                         <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">{greenhouse.name}</h1>
                         <p className="mt-1 text-sm text-neutral-400">{greenhouse.location} · AgroSkan rels-robot AI-skaner tizimi</p>
                     </div>
-                    <motion.div
-                        animate={{ opacity: [0.6, 1, 0.6] }}
-                        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                        className="flex items-center gap-2 rounded-full border border-sky-900/60 bg-sky-950/40 px-4 py-2 text-sm text-sky-300"
-                    >
-                        <span className="h-2 w-2 rounded-full bg-sky-400" />
-                        Jonli monitoring faol
-                    </motion.div>
+                    <div className="flex flex-col items-end gap-2">
+                        {isScanning ? (
+                            <motion.div
+                                animate={{ opacity: [0.6, 1, 0.6] }}
+                                transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                                className="flex items-center gap-2 rounded-full border border-sky-900/60 bg-sky-950/40 px-4 py-2 text-sm text-sky-300"
+                            >
+                                <span className="h-2 w-2 rounded-full bg-sky-400" />
+                                Robotlar skanerlamoqda ({scanningCount}/{robotStates.length})
+                            </motion.div>
+                        ) : (
+                            <button
+                                onClick={handleAnalyze}
+                                disabled={isTriggering}
+                                className="flex items-center gap-2 rounded-full border border-emerald-700 bg-emerald-950 px-4 py-2 text-sm font-medium text-emerald-400 transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <Zap className="h-3.5 w-3.5" />
+                                {isTriggering ? 'Ishga tushirilmoqda…' : `Tahlil qilish — ${greenhouse.crop}`}
+                            </button>
+                        )}
+                        <span className="text-xs text-neutral-500">Robotlar faqat shu tugma bosilganda ishga tushadi</span>
+                    </div>
                 </div>
             </div>
 
@@ -81,10 +136,10 @@ export default function Dashboard({ greenhouses, greenhouse, zones, stats, categ
                 <StatCard
                     index={3}
                     icon={Bot}
-                    label="Robot holati"
-                    value={robot?.status === 'idle' ? 'Tayyor' : robot?.status}
+                    label="Robotlar"
+                    value={isScanning ? `${scanningCount}/${robotStates.length} skanerlamoqda` : 'Tayyor'}
                     accent="sky"
-                    hint={robot?.last_scan_at ? `Oxirgi skan: ${new Date(robot.last_scan_at).toLocaleString('uz-UZ')}` : '—'}
+                    hint={`${robotStates.length} ta zonaviy robot · o'rtacha batareya ${avgBattery ?? '—'}%`}
                 />
             </section>
 
@@ -194,9 +249,20 @@ export default function Dashboard({ greenhouses, greenhouse, zones, stats, categ
                             </motion.div>
                         ))}
                     </div>
-                    <div className="mt-4 flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950/40 p-3 text-xs text-neutral-500">
-                        <BatteryMedium className="h-4 w-4 text-amber-400" />
-                        Robot batareyasi: <span className="font-semibold text-neutral-300">{robot?.battery_pct ?? '—'}%</span>
+                    <div className="mt-4 space-y-1.5 rounded-xl border border-neutral-800 bg-neutral-950/40 p-3 text-xs text-neutral-500">
+                        <div className="mb-1.5 flex items-center gap-2">
+                            <BatteryMedium className="h-4 w-4 text-amber-400" />
+                            Zonaviy robotlar
+                        </div>
+                        {robotStates.map((r) => (
+                            <div key={r.zone_id} className="flex items-center justify-between">
+                                <span className="text-neutral-400">Blok {r.zone_code}</span>
+                                <span className="flex items-center gap-2">
+                                    <RobotStatusBadge status={r.status} />
+                                    <span className="font-semibold text-neutral-300">{r.battery_pct ?? '—'}%</span>
+                                </span>
+                            </div>
+                        ))}
                     </div>
                 </motion.section>
 
@@ -245,6 +311,22 @@ function LegendDot({ color, label }) {
         <span className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
             {label}
+        </span>
+    );
+}
+
+function RobotStatusBadge({ status }) {
+    const styles = {
+        idle: 'bg-neutral-800 text-neutral-400',
+        scanning: 'bg-sky-950 text-sky-400',
+        charging: 'bg-amber-950 text-amber-400',
+        error: 'bg-red-950 text-red-400',
+    };
+    const labels = { idle: 'Tayyor', scanning: 'Skanerlamoqda', charging: 'Zaryadda', error: 'Xatolik' };
+
+    return (
+        <span className={`rounded-full px-2 py-0.5 text-[10px] uppercase ${styles[status] ?? styles.idle}`}>
+            {labels[status] ?? status}
         </span>
     );
 }

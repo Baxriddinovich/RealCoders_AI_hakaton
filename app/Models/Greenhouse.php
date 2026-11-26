@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\GreenhouseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Greenhouse extends Model
@@ -38,8 +39,8 @@ class Greenhouse extends Model
         return $this->hasMany(YieldForecast::class);
     }
 
-    public function robotStatuses(): HasMany
+    public function robotStatuses(): HasManyThrough
     {
-        return $this->hasMany(RobotStatus::class);
+        return $this->hasManyThrough(RobotStatus::class, Zone::class);
     }
 }

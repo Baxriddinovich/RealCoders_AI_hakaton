@@ -13,9 +13,9 @@ class RobotStatusForm
     {
         return $schema
             ->components([
-                Select::make('greenhouse_id')
-                    ->label('Issiqxona')
-                    ->relationship('greenhouse', 'name')
+                Select::make('zone_id')
+                    ->label('Zona')
+                    ->relationship('zone', 'code')
                     ->searchable()
                     ->preload()
                     ->required(),

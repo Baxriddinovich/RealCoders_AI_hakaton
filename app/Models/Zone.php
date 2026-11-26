@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Zone extends Model
 {
@@ -28,5 +29,10 @@ class Zone extends Model
     public function plantSpots(): HasMany
     {
         return $this->hasMany(PlantSpot::class);
+    }
+
+    public function robotStatus(): HasOne
+    {
+        return $this->hasOne(RobotStatus::class);
     }
 }

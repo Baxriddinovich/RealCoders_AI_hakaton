@@ -174,7 +174,7 @@ class AgroSkanDemoSeeder extends Seeder
         }
 
         $this->seedYieldForecast($greenhouse, $forecastKg);
-        $this->seedRobotStatus($greenhouse);
+        $this->seedRobotStatuses($zones);
     }
 
     /**
@@ -292,17 +292,22 @@ class AgroSkanDemoSeeder extends Seeder
         }
     }
 
-    private function seedRobotStatus(Greenhouse $greenhouse): void
+    /**
+     * @param  Collection<int, Zone>  $zones
+     */
+    private function seedRobotStatuses(Collection $zones): void
     {
-        RobotStatus::updateOrCreate(
-            ['greenhouse_id' => $greenhouse->id],
-            [
-                'status' => 'idle',
-                'battery_pct' => 87,
-                'last_scan_at' => Carbon::now()->setTime(7, 14),
-                'scans_completed_today' => 1,
-                'error_count' => 0,
-            ]
-        );
+        foreach ($zones as $zone) {
+            RobotStatus::updateOrCreate(
+                ['zone_id' => $zone->id],
+                [
+                    'status' => 'idle',
+                    'battery_pct' => random_int(80, 100),
+                    'last_scan_at' => Carbon::now()->setTime(7, 14),
+                    'scans_completed_today' => 1,
+                    'error_count' => 0,
+                ]
+            );
+        }
     }
 }

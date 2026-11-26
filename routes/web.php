@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlantSpotController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportPdfController;
+use App\Http\Controllers\ScanController;
 use App\Http\Controllers\TelegramBotController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,5 +23,8 @@ Route::get('/ai-tahlil', [AiAnalysisController::class, 'index'])->name('ai-analy
 Route::post('/ai-tahlil', [AiAnalysisController::class, 'analyze'])->name('ai-analysis.analyze');
 
 Route::get('/greenhouses/{greenhouse}/report.pdf', [ReportPdfController::class, 'download'])->name('reports.pdf');
+
+Route::post('/scans', [ScanController::class, 'start'])->name('scans.start');
+Route::get('/scans/status', [ScanController::class, 'statuses'])->name('scans.status');
 
 Route::post('/telegram/webhook', [TelegramBotController::class, 'webhook'])->name('telegram.webhook');

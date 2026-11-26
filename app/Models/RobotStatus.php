@@ -13,8 +13,10 @@ class RobotStatus extends Model
     use HasFactory;
 
     protected $fillable = [
-        'greenhouse_id',
+        'zone_id',
         'status',
+        'current_crop',
+        'scan_started_at',
         'battery_pct',
         'last_scan_at',
         'scans_completed_today',
@@ -25,11 +27,12 @@ class RobotStatus extends Model
     {
         return [
             'last_scan_at' => 'datetime',
+            'scan_started_at' => 'datetime',
         ];
     }
 
-    public function greenhouse(): BelongsTo
+    public function zone(): BelongsTo
     {
-        return $this->belongsTo(Greenhouse::class);
+        return $this->belongsTo(Zone::class);
     }
 }

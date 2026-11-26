@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Alert;
 use App\Models\Greenhouse;
 use App\Models\Observation;
-use App\Models\RobotStatus;
 use App\Models\YieldForecast;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,11 +13,16 @@ use Inertia\Response;
 
 class DashboardController extends Controller
 {
+    private const CROP_SLUGS = [
+        'Qulupnay' => 'strawberry',
+        'Pomidor' => 'tomato',
+    ];
+
     public function index(Request $request): Response
     {
         $greenhouses = Greenhouse::orderBy('code')->get(['id', 'code', 'name', 'crop']);
 
-        $greenhouse = Greenhouse::with(['zones.plantSpots'])
+        $greenhouse = Greenhouse::with(['zones.plantSpots', 'zones.robotStatus'])
             ->when(
                 $request->integer('greenhouse'),
                 fn ($q, $id) => $q->where('id', $id),
@@ -90,7 +94,14 @@ class DashboardController extends Controller
             ->orderBy('horizon_days')
             ->get(['horizon_days', 'expected_kg', 'grade_a_pct', 'grade_b_pct', 'grade_c_pct']);
 
-        $robot = RobotStatus::where('greenhouse_id', $greenhouse->id)->latest('last_scan_at')->first();
+        $robots = $greenhouse->zones->map(fn ($zone) => [
+            'zone_id' => $zone->id,
+            'zone_code' => $zone->code,
+            'status' => $zone->robotStatus?->status ?? 'idle',
+            'battery_pct' => $zone->robotStatus?->battery_pct,
+            'last_scan_at' => $zone->robotStatus?->last_scan_at?->toIso8601String(),
+            'scans_completed_today' => $zone->robotStatus?->scans_completed_today ?? 0,
+        ]);
 
         return Inertia::render('Dashboard', [
             'greenhouses' => $greenhouses,
@@ -101,6 +112,7 @@ class DashboardController extends Controller
                 'location' => $greenhouse->location,
                 'area_ha' => $greenhouse->area_ha,
                 'crop' => $greenhouse->crop,
+                'crop_slug' => self::CROP_SLUGS[$greenhouse->crop] ?? 'tomato',
             ],
             'zones' => $zones,
             'stats' => [
@@ -112,7 +124,7 @@ class DashboardController extends Controller
             'categoryBreakdown' => $categoryBreakdown,
             'alerts' => $alerts,
             'forecasts' => $forecasts,
-            'robot' => $robot,
+            'robots' => $robots,
         ]);
     }
 

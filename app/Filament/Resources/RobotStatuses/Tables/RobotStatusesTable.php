@@ -14,8 +14,11 @@ class RobotStatusesTable
     {
         return $table
             ->columns([
-                TextColumn::make('greenhouse.name')
+                TextColumn::make('zone.greenhouse.name')
                     ->label('Issiqxona')
+                    ->searchable(),
+                TextColumn::make('zone.code')
+                    ->label('Zona')
                     ->searchable(),
                 TextColumn::make('status')
                     ->label('Holati')

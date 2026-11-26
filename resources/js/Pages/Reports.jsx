@@ -21,13 +21,13 @@ export default function Reports({ byZone, byCategory, greenhouseId, greenhouses 
             </div>
 
             {greenhouses?.length > 1 && (
-                <div className="mb-6 flex gap-2">
+                <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
                     {greenhouses.map((gh) => (
                         <Link
                             key={gh.id}
                             href={`/reports?greenhouse=${gh.id}`}
                             preserveState={false}
-                            className={`rounded-full border px-4 py-1.5 text-sm transition ${
+                            className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm transition ${
                                 gh.id === greenhouseId
                                     ? 'border-emerald-700 bg-emerald-950 text-emerald-400'
                                     : 'border-neutral-800 text-neutral-400 hover:border-neutral-700'
