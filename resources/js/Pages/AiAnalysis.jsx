@@ -5,15 +5,15 @@ import AppLayout from '@/Layouts/AppLayout';
 import { ScanEye, UploadCloud, CheckCircle2, FlaskConical } from 'lucide-react';
 
 const CROPS = [
-    { value: 'strawberry', label: "Qulupnay" },
     { value: 'tomato', label: 'Pomidor' },
+    { value: 'strawberry', label: "Qulupnay" },
 ];
 
 export default function AiAnalysis({ modelInfo }) {
     const { flash } = usePage().props;
     const analysis = flash?.analysis;
     const [preview, setPreview] = useState(null);
-    const { data, setData, post, processing, errors } = useForm({ image: null, crop: 'strawberry' });
+    const { data, setData, post, processing, errors } = useForm({ image: null, crop: 'tomato' });
 
     const cropInfo = modelInfo.crops[data.crop];
 

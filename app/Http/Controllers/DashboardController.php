@@ -26,7 +26,9 @@ class DashboardController extends Controller
             ->when(
                 $request->integer('greenhouse'),
                 fn ($q, $id) => $q->where('id', $id),
-                fn ($q) => $q->orderBy('code')
+                // Tomato has the stronger model (~95% vs strawberry's ~70%),
+                // so it's what opens by default.
+                fn ($q) => $q->orderByRaw("crop = 'Pomidor' desc")->orderBy('code')
             )
             ->firstOrFail();
 
