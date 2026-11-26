@@ -26,19 +26,6 @@ class AgroSkanDemoSeeder extends Seeder
      * @var array<string, array<string, string>>
      */
     private const PREFIX_MAPS = [
-        'dataset' => [
-            'fertile_K_P' => 'deficiency_potassium_phosphorus',
-            'fertile_Ca' => 'deficiency_calcium',
-            'fertile_Fe' => 'deficiency_iron',
-            'ill_anthracnose' => 'disease_anthracnose',
-            'ill_blight' => 'disease_blight',
-            'ill_gray_mold' => 'disease_gray_mold',
-            'ill_insect' => 'pest_insect',
-            'ill_leaf_spot' => 'disease_leaf_spot',
-            'ill_powdery_mildew' => 'disease_powdery_mildew',
-            'flower' => 'healthy_flower',
-            'fruit' => 'healthy_fruit',
-        ],
         'dataset-tomato' => [
             'Tomato___Bacterial_spot' => 'disease_tomato_bacterial_spot',
             'Tomato___Early_blight' => 'disease_tomato_early_blight',
@@ -51,23 +38,32 @@ class AgroSkanDemoSeeder extends Seeder
             'Tomato___mosaic_virus' => 'disease_tomato_mosaic_virus',
             'Tomato___healthy' => 'healthy_tomato',
         ],
+        'dataset-pepper' => [
+            'Pepper__bell___Bacterial_spot' => 'disease_pepper_bacterial_spot',
+            'Pepper__bell___healthy' => 'healthy_pepper',
+            'Alternaria_Boltch' => 'disease_pepper_alternaria',
+            'Brown_Spot' => 'disease_pepper_brown_spot',
+            'Grey_spot' => 'disease_pepper_grey_spot',
+            'Mosaic' => 'disease_pepper_mosaic',
+            'Rust' => 'disease_pepper_rust',
+        ],
+        'dataset-cucumber' => [
+            'Bacterial_Wilt' => 'disease_cucumber_bacterial_wilt',
+            'Gummy_Stem_Blight' => 'disease_cucumber_gummy_stem_blight',
+            'Downy_Mildew' => 'disease_cucumber_downy_mildew',
+            'Anthracnose' => 'disease_cucumber_anthracnose',
+            'Pythium_Fruit_Rot' => 'disease_cucumber_pythium_fruit_rot',
+            'Belly_Rot' => 'disease_cucumber_belly_rot',
+            'Fresh_Leaf' => 'healthy_cucumber_leaf',
+            'Fresh_Cucumber' => 'healthy_cucumber_fruit',
+        ],
     ];
 
     public function run(): void
     {
         $categories = $this->seedCategories();
 
-        $strawberryHouse = Greenhouse::updateOrCreate(
-            ['code' => 'GH01'],
-            [
-                'name' => 'Jizzax pilot issiqxonasi',
-                'location' => 'Jizzax viloyati',
-                'area_ha' => 0.5,
-                'crop' => 'Qulupnay',
-                'cover_type' => 'Plyonka',
-            ]
-        );
-        $this->seedGreenhouseData($strawberryHouse, 'dataset', $categories, [420.50, 860.00]);
+        Greenhouse::where('code', 'GH01')->delete();
 
         $tomatoHouse = Greenhouse::updateOrCreate(
             ['code' => 'GH02'],
@@ -80,6 +76,30 @@ class AgroSkanDemoSeeder extends Seeder
             ]
         );
         $this->seedGreenhouseData($tomatoHouse, 'dataset-tomato', $categories, [1120.00, 2260.00]);
+
+        $pepperHouse = Greenhouse::updateOrCreate(
+            ['code' => 'GH03'],
+            [
+                'name' => 'Jizzax qalampir issiqxonasi',
+                'location' => 'Jizzax viloyati',
+                'area_ha' => 0.6,
+                'crop' => 'Qalampir',
+                'cover_type' => 'Polikarbonat',
+            ]
+        );
+        $this->seedGreenhouseData($pepperHouse, 'dataset-pepper', $categories, [540.00, 1080.00]);
+
+        $cucumberHouse = Greenhouse::updateOrCreate(
+            ['code' => 'GH04'],
+            [
+                'name' => 'Samarqand bodiring issiqxonasi',
+                'location' => 'Samarqand viloyati',
+                'area_ha' => 0.7,
+                'crop' => 'Bodiring',
+                'cover_type' => 'Plyonka',
+            ]
+        );
+        $this->seedGreenhouseData($cucumberHouse, 'dataset-cucumber', $categories, [760.00, 1520.00]);
     }
 
     /**
@@ -89,6 +109,11 @@ class AgroSkanDemoSeeder extends Seeder
     private function seedGreenhouseData(Greenhouse $greenhouse, string $datasetFolder, array $categories, array $forecastKg): void
     {
         $zones = $this->seedZones($greenhouse);
+
+        if (PlantSpot::whereIn('zone_id', $zones->pluck('id'))->exists()) {
+            return;
+        }
+
         $prefixMap = self::PREFIX_MAPS[$datasetFolder];
 
         $files = collect(Storage::disk('public')->files($datasetFolder))
@@ -185,18 +210,6 @@ class AgroSkanDemoSeeder extends Seeder
     private function seedCategories(): array
     {
         $rows = [
-            ['healthy_fruit', 'Sog\'lom meva', 'Healthy Fruit', 'healthy', 0, '#2E9E44'],
-            ['healthy_flower', 'Sog\'lom gul', 'Healthy Flower', 'healthy', 0, '#4CAF50'],
-            ['deficiency_calcium', 'Kaltsiy yetishmovchiligi', 'Calcium Deficiency', 'deficiency', 15, '#E6C229'],
-            ['deficiency_iron', 'Temir yetishmovchiligi', 'Iron Deficiency', 'deficiency', 15, '#D4A017'],
-            ['deficiency_potassium_phosphorus', 'Kaliy-fosfor yetishmovchiligi', 'Potassium-Phosphorus Deficiency', 'deficiency', 18, '#C68E17'],
-            ['disease_anthracnose', 'Antraknoz', 'Anthracnose', 'disease', 35, '#B22222'],
-            ['disease_blight', 'So\'lish kasalligi (Blight)', 'Blossom Blight', 'disease', 32, '#8B0000'],
-            ['disease_gray_mold', 'Kulrang chirish', 'Gray Mold', 'disease', 38, '#D62828'],
-            ['pest_insect', 'Zararkunanda zarari', 'Insect Damage', 'pest', 20, '#8E44AD'],
-            ['disease_leaf_spot', 'Barg dog\'lanishi', 'Leaf Spot', 'disease', 25, '#F28C28'],
-            ['disease_powdery_mildew', 'Un-shudring', 'Powdery Mildew', 'disease', 30, '#7F8C8D'],
-
             // Pomidor (PlantVillage dataset)
             ['healthy_tomato', "Sog'lom pomidor", 'Healthy Tomato', 'healthy', 0, '#2E9E44'],
             ['disease_tomato_bacterial_spot', 'Bakterial dog\'lanish', 'Bacterial Spot', 'disease', 28, '#B22222'],
@@ -208,6 +221,25 @@ class AgroSkanDemoSeeder extends Seeder
             ['disease_tomato_yellow_leaf_curl_virus', 'Sarg\'ayish virusi (TYLCV)', 'Yellow Leaf Curl Virus', 'disease', 42, '#D4AC0D'],
             ['disease_tomato_mosaic_virus', 'Mozaika virusi (ToMV)', 'Mosaic Virus', 'disease', 38, '#8E44AD'],
             ['pest_tomato_spider_mites', 'O\'rgimchakkana zarari', 'Spider Mites', 'pest', 22, '#7D3C98'],
+
+            // Qalampir (Pepper dataset)
+            ['healthy_pepper', "Sog'lom qalampir", 'Healthy Pepper', 'healthy', 0, '#2E9E44'],
+            ['disease_pepper_bacterial_spot', 'Bakterial dog\'lanish', 'Bacterial Spot', 'disease', 28, '#B22222'],
+            ['disease_pepper_alternaria', 'Alternarioz', 'Alternaria Blotch', 'disease', 30, '#A0522D'],
+            ['disease_pepper_brown_spot', 'Jigarrang dog\'lanish', 'Brown Spot', 'disease', 27, '#8B4513'],
+            ['disease_pepper_grey_spot', 'Kulrang dog\'lanish', 'Grey Spot', 'disease', 26, '#7F8C8D'],
+            ['disease_pepper_mosaic', 'Mozaika virusi', 'Mosaic Virus', 'disease', 38, '#8E44AD'],
+            ['disease_pepper_rust', 'Zang kasalligi', 'Rust', 'disease', 32, '#C0622B'],
+
+            // Bodiring (Cucumber dataset)
+            ['healthy_cucumber_leaf', "Sog'lom barg", 'Healthy Leaf', 'healthy', 0, '#2E9E44'],
+            ['healthy_cucumber_fruit', "Sog'lom meva", 'Healthy Fruit', 'healthy', 0, '#4CAF50'],
+            ['disease_cucumber_anthracnose', 'Antraknoz', 'Anthracnose', 'disease', 35, '#B22222'],
+            ['disease_cucumber_bacterial_wilt', 'Bakterial so\'lish', 'Bacterial Wilt', 'disease', 40, '#6B0F1A'],
+            ['disease_cucumber_belly_rot', 'Meva chirishi', 'Belly Rot', 'disease', 36, '#8B0000'],
+            ['disease_cucumber_downy_mildew', "Yolg'on un-shudring", 'Downy Mildew', 'disease', 33, '#7F8C8D'],
+            ['disease_cucumber_gummy_stem_blight', 'Poya chirishi', 'Gummy Stem Blight', 'disease', 37, '#5B2C6F'],
+            ['disease_cucumber_pythium_fruit_rot', 'Pythium meva chirishi', 'Pythium Fruit Rot', 'disease', 38, '#922B21'],
         ];
 
         $categories = [];

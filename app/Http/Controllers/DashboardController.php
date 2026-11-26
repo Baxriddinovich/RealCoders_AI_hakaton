@@ -14,8 +14,9 @@ use Inertia\Response;
 class DashboardController extends Controller
 {
     private const CROP_SLUGS = [
-        'Qulupnay' => 'strawberry',
         'Pomidor' => 'tomato',
+        'Bodiring' => 'cucumber',
+        'Qalampir' => 'pepper',
     ];
 
     public function index(Request $request): Response
@@ -26,8 +27,7 @@ class DashboardController extends Controller
             ->when(
                 $request->integer('greenhouse'),
                 fn ($q, $id) => $q->where('id', $id),
-                // Tomato has the stronger model (~95% vs strawberry's ~70%),
-                // so it's what opens by default.
+                // Tomato has the strongest model, so it's what opens by default.
                 fn ($q) => $q->orderByRaw("crop = 'Pomidor' desc")->orderBy('code')
             )
             ->firstOrFail();

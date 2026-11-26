@@ -109,7 +109,7 @@ export default function AppLayout({ children }) {
                     </div>
                     <NavLinks url={url} />
                     <div className="mt-10 rounded-lg border border-neutral-800 bg-neutral-900 p-3 text-xs text-neutral-500">
-                        Demo dashboard — investor va hamkorlar uchun. Issiqxona xaritasi qulupnay datasetida, AI Tahlil qulupnay + pomidor datasetlarida o'qitilgan.
+                        Demo dashboard — investor va hamkorlar uchun. AI Tahlil pomidor, bodiring va qalampir datasetlarida o'qitilgan.
                     </div>
                 </aside>
                 <main className="min-w-0 flex-1 p-4 md:p-8">{children}</main>

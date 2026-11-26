@@ -16,7 +16,7 @@ class SupplierDemoSeeder extends Seeder
         $rows = [
             ['ogit', 'AgroKimyo Savdo MChJ', '+998 90 123 45 67', 'Jizzax sh., Sanoat ko\'chasi 14', null, "Organik va mineral o'g'itlar"],
             ['ogit', "Fermer Ta'minot", '+998 91 234 56 78', "Jizzax viloyati, Do'stlik tumani", null, null],
-            ['urug_kochat', 'Yashil Niholzor', '+998 93 345 67 89', 'Jizzax sh., Bog\'bon ko\'chasi 3', null, "Qulupnay va pomidor ko'chatlari"],
+            ['urug_kochat', 'Yashil Niholzor', '+998 93 345 67 89', 'Jizzax sh., Bog\'bon ko\'chasi 3', null, "Pomidor, bodiring va qalampir ko'chatlari"],
             ['urug_kochat', "Agro Urug' Markazi", '+998 94 456 78 90', 'Toshkent sh., Chilonzor', null, null],
             ['dori', 'AgroHimoya Plus', '+998 95 567 89 01', 'Jizzax sh., Sanoat ko\'chasi 22', null, 'Fungitsid va pestitsidlar'],
             ['svet', "Jizzaxenergo (hudud bo'limi)", '+998 71 123 45 67', 'Jizzax viloyati energo ta\'minoti', '0210 4500 1234 5678', "Abonent raqami to'lov kvitansiyasida"],

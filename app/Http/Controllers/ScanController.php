@@ -13,9 +13,12 @@ class ScanController extends Controller
 {
     public function start(Request $request): RedirectResponse
     {
+        $metadata = json_decode(file_get_contents('/opt/agroskan-ml/model_metadata.json'), true);
+        $validCrops = array_keys($metadata['crops'] ?? []);
+
         $validated = $request->validate([
             'greenhouse_id' => 'required|exists:greenhouses,id',
-            'crop' => 'required|in:strawberry,tomato',
+            'crop' => ['required', 'in:'.implode(',', $validCrops)],
         ]);
 
         $zones = Zone::where('greenhouse_id', $validated['greenhouse_id'])->with('robotStatus')->get();

@@ -28,9 +28,14 @@ class AiAnalysisController extends Controller
         'deficiency' => '#E6C229',
     ];
 
+    private function metadata(): array
+    {
+        return json_decode(file_get_contents(self::ML_DIR.'/model_metadata.json'), true);
+    }
+
     public function index(): Response
     {
-        $metadata = json_decode(file_get_contents(self::ML_DIR.'/model_metadata.json'), true);
+        $metadata = $this->metadata();
 
         return Inertia::render('AiAnalysis', [
             'modelInfo' => [
@@ -47,9 +52,11 @@ class AiAnalysisController extends Controller
 
     public function analyze(Request $request): RedirectResponse
     {
+        $validCrops = array_keys($this->metadata()['crops'] ?? []);
+
         $validated = $request->validate([
             'image' => 'required|image|max:10240',
-            'crop' => 'required|in:strawberry,tomato',
+            'crop' => ['required', 'in:'.implode(',', $validCrops)],
         ]);
 
         $path = $request->file('image')->store('ai-uploads', 'public');
